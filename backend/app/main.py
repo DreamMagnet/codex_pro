@@ -1,8 +1,70 @@
-"""Application entry point."""
+"""Simple FastAPI backend that stores items in a JSON file (no database)."""
+
+import json
+import uuid
+from pathlib import Path
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+DATA_FILE = Path(__file__).resolve().parent.parent / "data.json"
+
+app = FastAPI(title="codex_pro API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+class Item(BaseModel):
+    id: str | None = None
+    text: str
+
+
+def read_items() -> list[dict]:
+    if not DATA_FILE.exists():
+        return []
+    with DATA_FILE.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def write_items(items: list[dict]) -> None:
+    with DATA_FILE.open("w", encoding="utf-8") as f:
+        json.dump(items, f, indent=2)
+
+
+@app.get("/api/items")
+def list_items() -> list[dict]:
+    return read_items()
+
+
+@app.post("/api/items")
+def create_item(item: Item) -> dict:
+    items = read_items()
+    new_item = {"id": str(uuid.uuid4()), "text": item.text}
+    items.append(new_item)
+    write_items(items)
+    return new_item
+
+
+@app.delete("/api/items/{item_id}")
+def delete_item(item_id: str) -> dict:
+    items = read_items()
+    remaining = [i for i in items if i["id"] != item_id]
+    if len(remaining) == len(items):
+        raise HTTPException(status_code=404, detail="Item not found")
+    write_items(remaining)
+    return {"status": "deleted"}
 
 
 def main() -> None:
-    print("Hello from the backend service.")
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
 
 if __name__ == "__main__":

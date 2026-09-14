@@ -2,9 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>App</title>
+    <title>Items</title>
+    <style>
+      body { font-family: sans-serif; max-width: 480px; margin: 40px auto; }
+      li { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+      button { cursor: pointer; }
+    </style>
   </head>
   <body>
+    <h1>Items</h1>
+    <form id="item-form">
+      <input id="item-text" type="text" placeholder="New item" required />
+      <button type="submit">Add</button>
+    </form>
+    <ul id="item-list"></ul>
     <script src="src/main.js"></script>
   </body>
 </html>
