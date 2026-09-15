@@ -24,6 +24,14 @@ class ItemEndpointTests(unittest.TestCase):
             {"id": "third", "text": "Call dentist"},
         ]
 
+    def test_frontend_is_served_without_shadowing_api_routes(self):
+        response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('id="search-items"', response.text)
+        self.assertEqual(self.client.get("/src/main.js").status_code, 200)
+        self.assertEqual(self.client.get("/api/health").json(), {"status": "ok"})
+
     def test_search_matches_case_insensitive_substrings_without_writing(self):
         main.write_items(self.items)
         original = main.DATA_FILE.read_bytes()

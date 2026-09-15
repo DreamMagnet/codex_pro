@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:8000/api/items'
+const API_BASE = location.protocol === 'file:' ? 'http://127.0.0.1:8000/api/items' : '/api/items'
 
 const form = document.getElementById('item-form')
 const input = document.getElementById('item-text')
@@ -111,9 +111,10 @@ async function loadItems() {
     const items = await request(path, { signal: controller.signal })
     if (controller.signal.aborted) return
     renderItems(items)
-    itemCount.textContent = `${items.length} ${query
-      ? (items.length === 1 ? 'match' : 'matches')
-      : (items.length === 1 ? 'item' : 'items')}`
+    const singularLabel = query ? 'match' : 'item'
+    const pluralLabel = query ? 'matches' : 'items'
+    const countLabel = items.length === 1 ? singularLabel : pluralLabel
+    itemCount.textContent = `${items.length} ${countLabel}`
     list.hidden = items.length === 0
     listState.hidden = items.length > 0
     stateText.textContent = query ? 'No matching items' : 'No items yet'
@@ -160,7 +161,8 @@ async function mutate(path, options, message, afterSuccess) {
     if (focusedItemId && document.activeElement === document.body) {
       const row = Array.from(list.children).find((item) => item.dataset.itemId === focusedItemId)
       const button = row?.querySelector(`[data-action="${focusedAction}"]`)
-      ;(button || input).focus()
+      const focusTarget = button || input
+      focusTarget.focus()
     }
   }
 }

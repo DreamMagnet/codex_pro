@@ -6,6 +6,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 DATA_FILE = Path(__file__).resolve().parent.parent / "data.json"
@@ -120,6 +121,13 @@ def delete_item(item_id: str) -> dict:
 def delete_all_items() -> dict:
     write_items([])
     return {"status": "cleared"}
+
+
+app.mount(
+    "/",
+    StaticFiles(directory=Path(__file__).resolve().parents[2] / "frontend", html=True),
+    name="frontend",
+)
 
 
 def main() -> None:

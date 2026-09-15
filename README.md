@@ -8,22 +8,21 @@ Scaffolded by CodeAtlas as a both project.ccc
 
 ## Run locally
 
-From the project root, install and start the API:
+From the project root, install the API dependencies and UI icons, then start the app:
 
 ```powershell
 python -m pip install -r backend/requirements.txt
+npm --prefix frontend install
 python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Install the UI icons in another terminal:
+Open `http://127.0.0.1:8000` in a browser. FastAPI also serves the UI, so no separate
+frontend build or dev server is needed. If port 8000 is busy, use `--port 8001` and
+open `http://127.0.0.1:8001`; API requests use the page's origin.
 
-```powershell
-npm --prefix frontend install
-```
-
-Open [frontend/index.html](frontend/index.html) in a browser. No frontend build or
-dev server is needed. The page connects to `http://127.0.0.1:8000` and supports
-adding, searching, duplicating, and deleting items. Items are stored in
+You can also open [frontend/index.html](frontend/index.html) directly when the API
+runs on port 8000. The page supports adding, searching, duplicating, and deleting
+items. Items are stored in
 `backend/data.json`; this is a local, single-user demo with no authentication.
 
 ## New endpoints
