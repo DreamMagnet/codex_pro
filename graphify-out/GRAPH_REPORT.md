@@ -1,4 +1,4 @@
-# Graph Report - codex_pro  (2026-09-14)
+# Graph Report - codex_pro  (2026-09-15)
 
 ## Corpus Check
 - cluster-only mode — file stats not available
@@ -9,7 +9,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `67f3d736`
+- Built from commit: `ce6444ab`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
