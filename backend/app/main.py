@@ -53,11 +53,36 @@ def count_items() -> dict:
     return {"count": len(read_items())}
 
 
+@app.get("/api/items/search")
+def search_items(query: str = "") -> list[dict]:
+    normalized_query = query.strip().casefold()
+    return [
+        item for item in read_items()
+        if normalized_query in item["text"].casefold()
+    ]
+
+
 @app.get("/api/items/{item_id}")
 def get_item(item_id: str) -> dict:
     for existing in read_items():
         if existing["id"] == item_id:
             return existing
+    raise HTTPException(status_code=404, detail=ITEM_NOT_FOUND)
+
+
+@app.post(
+    "/api/items/{item_id}/duplicate",
+    status_code=201,
+    responses={404: {"description": ITEM_NOT_FOUND}},
+)
+def duplicate_item(item_id: str) -> dict:
+    items = read_items()
+    for existing in items:
+        if existing["id"] == item_id:
+            duplicate = {"id": str(uuid.uuid4()), "text": existing["text"]}
+            items.append(duplicate)
+            write_items(items)
+            return duplicate
     raise HTTPException(status_code=404, detail=ITEM_NOT_FOUND)
 
 
